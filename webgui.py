@@ -809,23 +809,24 @@ def question():
         def __init__(self, **kwargs):
             self.__dict__.update(kwargs)
     q = Q(**qd)
-
     if request.method == 'POST':
+        # Handle answer submission
         choice = request.form.get('choice')
         prog_raw = state.get('progress', {})
         # restore CardState objects
-        prog = {k: CardState(**v) for k,v in prog_raw.items()}
-        ok = (choice == q.answer)
-        st = prog.get(q.id, CardState())
+        prog = {k: CardState(**v) for k, v in prog_raw.items()}
+        ok = (choice == getattr(q, 'answer', None))
+        st = prog.get(getattr(q, 'id', None), CardState())
         if ok:
             st.promote()
         else:
             st.demote()
-            # append to wrong
-            state['wrong'].append(q.__dict__)
-        prog[q.id] = st
-        # write back
-        state['progress'] = {k:v.__dict__ for k,v in prog.items()}
+            # append to wrong list for later review
+            state.setdefault('wrong', []).append(q.__dict__)
+        # persist progress and advance index
+        if getattr(q, 'id', None) is not None:
+            prog[q.id] = st
+        state['progress'] = {k: v.__dict__ for k, v in prog.items()}
         state['index'] = idx + 1
 
         # gamification: award points (per-user) after answering
@@ -834,33 +835,31 @@ def question():
         gs = load_gamestate(uid)
         # ensure daily streak is current for this activity
         gs = update_daily_streak(gs)
-        # implement streak-based doubling: correct streak doubles points each successive correct
-        # and wrong streak doubles negative penalty similarly. We store answer_streak in gamestate
+
+        # implement streak-based doubling
         streak = gs.get('answer_streak', 0) or 0
         if ok:
-            # if previous streak was negative (wrong streak), reset
             if streak < 0:
                 streak = 0
-            # next point value: base 10, doubles each correct in streak: 10 * (2 ** streak)
             delta = 10 * (2 ** streak)
             streak = streak + 1
             reason = 'correct'
         else:
-            # if previous streak was positive (correct streak), reset
             if streak > 0:
                 streak = 0
-            # wrong penalties: -2, then -4, -8, ...
+            # wrong penalty doubles on consecutive wrongs
             delta = - (2 * (2 ** abs(streak))) if streak < 0 else -2
             streak = streak - 1
             reason = 'incorrect'
         gs['answer_streak'] = streak
         award_points(gs, delta, reason, user_id=uid)
-        # render result page
-    return render_template('result.html', ok=ok, q=q, points_delta=delta, points=gs.get('points',0), rank=gs.get('rank','Unranked'), daily_streak=gs.get('daily_streak', 0), current_user=current_user())
+
+        # Render the result page for POST
+        return render_template('result.html', ok=ok, q=q, points_delta=delta, points=gs.get('points', 0), rank=gs.get('rank', 'Unranked'), daily_streak=gs.get('daily_streak', 0), current_user=current_user())
 
     # GET: build letter-option pairs for template
     letters = ['A', 'B', 'C', 'D']
-    pairs = list(zip(letters, q.options))
+    pairs = list(zip(letters, getattr(q, 'options', [])))
     # load points for signed-in user if available
     user = current_user()
     pts = load_gamestate(user or get_user_id()).get('points', 0)
