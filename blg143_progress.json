@@ -1,0 +1,72 @@
+{
+  "12-02": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T22:14:01",
+    "due": "2025-10-18T22:14:01"
+  },
+  "6-08": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T22:12:11",
+    "due": "2025-10-18T22:12:11"
+  },
+  "7-12": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T22:14:09",
+    "due": "2025-10-18T22:14:09"
+  },
+  "3-02": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T22:12:55",
+    "due": "2025-10-18T22:12:55"
+  },
+  "4-07": {
+    "box": 3,
+    "correct_streak": 2,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T22:28:02",
+    "due": "2025-10-20T22:28:02"
+  },
+  "6-04": {
+    "box": 3,
+    "correct_streak": 2,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T22:28:07",
+    "due": "2025-10-20T22:28:07"
+  },
+  "4-01": {
+    "box": 3,
+    "correct_streak": 2,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T22:27:57",
+    "due": "2025-10-20T22:27:57"
+  },
+  "10-05": {
+    "box": 3,
+    "correct_streak": 2,
+    "incorrect_count": 2,
+    "last_seen": "2025-10-17T22:27:52",
+    "due": "2025-10-20T22:27:52"
+  },
+  "6-10": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T22:13:41",
+    "due": "2025-10-18T22:13:41"
+  },
+  "7-03": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T22:13:49",
+    "due": "2025-10-18T22:13:49"
+  }
+}

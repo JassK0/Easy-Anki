@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Create account</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">CT</div>
+        <div>
+          <div class="app-title">Course Trainer</div>
+          <div class="muted-small">Learn smarter — gamified SRS</div>
+        </div>
+      </div>
+      <div class="user-panel">
+        <div class="points">⭐ <strong>{{ points }}</strong></div>
+        <div class="badges">
+          {% for b in badges %}
+            <div class="badge-pill">{{ b }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="max-width:520px;margin:18px auto;padding:18px">
+      <h3 style="margin-top:0">Create account</h3>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div style="margin-bottom:12px">
+            {% for cat, msg in messages %}
+              <div class="badge-pill" style="display:block;margin-bottom:6px;background: #fff3cd;color:#664d03;border:1px solid rgba(0,0,0,0.04)">{{ msg }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <form method="post" style="display:flex;flex-direction:column;gap:8px">
+        <input name="username" placeholder="Choose a username" autofocus>
+        <input name="password" placeholder="Choose a password" type="password">
+        <div class="muted-small" style="font-size:0.9rem">Password must be at least 8 characters and include an uppercase letter, a lowercase letter, a digit, and a special character.</div>
+        <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:6px">
+          <a class="site-btn ghost" href="/login">Have an account?</a>
+          <button class="site-btn" type="submit">Create account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pool Stats — {{ meta.orig_name }}</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Stats: {{ meta.orig_name }}</h2>
+      <div class="stat-row">
+        <div class="stat">
+          <h3>{{ stats.answered }}</h3>
+          <p>Answered</p>
+        </div>
+        <div class="stat">
+          <h3>{{ stats.total }}</h3>
+          <p>Total</p>
+        </div>
+        <div class="stat">
+          <h3>{{ (100 if stats.total==0 else (stats.answered*100//stats.total)) }}%</h3>
+          <p>Completion</p>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        {% if times['labels'] %}
+            <canvas id="progressChart" height="140"></canvas>
+          {% else %}
+          <p class="muted-small">No progress data yet for this pool.</p>
+          {% endif %}
+      </div>
+
+      <div style="margin-top:12px" class="stat-row">
+        <div class="stat">
+          <h3>{{ extra.correct }}</h3>
+          <p>Correct answers</p>
+        </div>
+        <div class="stat">
+          <h3>{{ extra.incorrect }}</h3>
+          <p>Incorrect answers</p>
+        </div>
+        <div class="stat">
+          <h3>{{ extra.accuracy }}%</h3>
+          <p>Accuracy</p>
+        </div>
+      </div>
+
+      <dl style="margin-top:12px">
+        <dt>Most correct (streak)</dt>
+        <dd>{% if stats.most_correct %}{{stats.most_correct.id}} — {{stats.most_correct.prompt}} (streak {{stats.most_correct.streak}}){% else %}n/a{% endif %}</dd>
+        <dt>Most wrong (count)</dt>
+        <dd>{% if stats.most_wrong %}{{stats.most_wrong.id}} — {{stats.most_wrong.prompt}} (wrong {{stats.most_wrong.count}}){% else %}n/a{% endif %}</dd>
+      </dl>
+
+      <div style="margin-top:12px"><a href="/pools" class="badge-pill">Back</a></div>
+    </div>
+  </div>
+
+  <script>
+  {% if times['labels'] %}
+  const labels = {{ times['labels'] | tojson }};
+  const values = {{ times['values'] | tojson }};
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: { labels: labels, datasets:[{label:'Answered (cumulative)', data:values, borderColor:'#06b6d4', tension:0.2, fill:false}] },
+      options: { scales:{ y:{ beginAtZero:true } } }
+    });
+  {% endif %}
+  </script>
+</body>
+</html>

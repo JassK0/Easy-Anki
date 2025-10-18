@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Question Pool</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <div style="margin-bottom:12px"><a class="badge-pill" href="/">← Home</a></div>
+    <div class="card">
+      <h3>Pool ({{count}})</h3>
+      <ul style="list-style:none;padding:0;margin:0">
+        {% for q in qs %}
+          <li class="card" style="margin-bottom:8px">[{{q['id']}}] {{q['prompt']}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

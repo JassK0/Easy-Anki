@@ -1,0 +1,205 @@
+{
+  "40": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 4,
+    "last_seen": "2025-10-17T20:59:00",
+    "due": "2025-10-18T20:59:00"
+  },
+  "10": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 6,
+    "last_seen": "2025-10-17T20:59:43",
+    "due": "2025-10-18T20:59:43"
+  },
+  "31": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T20:58:35",
+    "due": "2025-10-18T20:58:35"
+  },
+  "6": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T20:58:39",
+    "due": "2025-10-18T20:58:39"
+  },
+  "37": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 4,
+    "last_seen": "2025-10-17T20:59:25",
+    "due": "2025-10-18T20:59:25"
+  },
+  "3": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T20:58:42",
+    "due": "2025-10-18T20:58:42"
+  },
+  "26": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 4,
+    "last_seen": "2025-10-17T20:59:31",
+    "due": "2025-10-18T20:59:31"
+  },
+  "30": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T20:58:44",
+    "due": "2025-10-18T20:58:44"
+  },
+  "18": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T20:58:45",
+    "due": "2025-10-18T20:58:45"
+  },
+  "32": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T20:58:47",
+    "due": "2025-10-18T20:58:47"
+  },
+  "6-09": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T21:09:40",
+    "due": "2025-10-18T21:09:40"
+  },
+  "3-09": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T21:10:09",
+    "due": "2025-10-18T21:10:09"
+  },
+  "9-03": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T21:10:12",
+    "due": "2025-10-18T21:10:12"
+  },
+  "11-09": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T21:17:42",
+    "due": "2025-10-18T21:17:42"
+  },
+  "7-02": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T21:18:54",
+    "due": "2025-10-18T21:18:54"
+  },
+  "11-07": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T21:21:03",
+    "due": "2025-10-18T21:21:03"
+  },
+  "9-05": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T21:24:39",
+    "due": "2025-10-18T21:24:39"
+  },
+  "9-01": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T21:33:53",
+    "due": "2025-10-18T21:33:53"
+  },
+  "21": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T21:43:34",
+    "due": "2025-10-18T21:43:34"
+  },
+  "24": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T21:41:32",
+    "due": "2025-10-18T21:41:32"
+  },
+  "14": {
+    "box": 1,
+    "correct_streak": 0,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T21:41:35",
+    "due": "2025-10-17T21:41:35"
+  },
+  "4": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T21:41:37",
+    "due": "2025-10-18T21:41:37"
+  },
+  "15": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T21:43:48",
+    "due": "2025-10-18T21:43:48"
+  },
+  "5-03": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T22:48:34",
+    "due": "2025-10-18T22:48:34"
+  },
+  "5-08": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T22:48:40",
+    "due": "2025-10-18T22:48:40"
+  },
+  "4-07": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 2,
+    "last_seen": "2025-10-17T23:32:32",
+    "due": "2025-10-18T23:32:32"
+  },
+  "27": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 2,
+    "last_seen": "2025-10-17T23:57:26",
+    "due": "2025-10-18T23:57:26"
+  },
+  "19": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T23:57:24",
+    "due": "2025-10-18T23:57:24"
+  },
+  "29": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T23:57:12",
+    "due": "2025-10-18T23:57:12"
+  }
+}

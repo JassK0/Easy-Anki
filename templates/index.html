@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Course Trainer</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Small adjustment to make the topbar area stand out */
+    .topbar { padding-bottom: 6px; border-bottom: 1px solid rgba(2,6,23,0.03); }
+    .left-card .card { display:flex; flex-direction:column; gap:12px }
+    .upload-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center }
+    .upload-row input[type="text"], .upload-row input[type="number"], .upload-row input[type="file"]{ padding:8px; border-radius:8px; border:1px solid rgba(2,6,23,0.06) }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">CT</div>
+      <div>
+        <div class="app-title">Course Trainer</div>
+        <div class="muted-small">Learn smarter — gamified SRS</div>
+      </div>
+    </div>
+    <div class="user-panel">
+      <div class="points">⭐ <strong>{{ points }}</strong></div>
+      <div class="badges">
+        {% for b in badges %}
+          <div class="badge-pill">{{ b }}</div>
+        {% endfor %}
+      </div>
+      <div class="auth">
+        {% if current_user %}
+          <div class="muted-small">Signed in as <strong>{{ current_user }}</strong></div>
+          <a class="site-btn small ghost" href="/logout">Sign out</a>
+        {% else %}
+          <a class="site-btn small" href="/login">Sign in</a>
+          <a class="site-btn small ghost" href="/signup">Sign up</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top:18px">
+    <!-- LEFT: Pools + Upload -->
+    <div class="card left-card">
+      <h2 style="margin-top:0">Question Pools</h2>
+      <p class="muted">Choose a pool or upload your own CSV/JSON</p>
+
+      <form method="post" action="/start" enctype="multipart/form-data" class="upload-row">
+        <input type="file" name="file">
+        <input type="text" name="pool_name" placeholder="Optional pool name">
+        <input type="number" name="num" value="10" style="width:80px">
+        <input type="text" name="chapters" placeholder="Chapters (e.g. 3,4,9-12)">
+        <input type="text" name="tags" placeholder="Tags (comma separated)">
+        <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+          <button class="site-btn">Start</button>
+          <button type="button" id="previewBtn" class="site-btn ghost">Preview</button>
+          <a class="site-btn ghost" href="/pools">Manage Pools</a>
+        </div>
+      </form>
+
+      <div style="margin-top:12px">
+        <h4 style="margin:6px 0">Available pools</h4>
+        <div class="pool-list">
+          {% for p in pools %}
+            <div class="pool-item">
+              <div>
+                <h4 style="margin:0">{{ p.meta.orig_name }}</h4>
+                <p class="muted-small" style="margin:6px 0">{{ p.stats.total }} questions • {{ p.stats.answered }} answered</p>
+                <div class="progress" aria-hidden style="max-width:240px;">
+                  {% set pct = (p.stats.answered * 100 // p.stats.total) if p.stats.total else 0 %}
+                  <span style="width: {{ pct }}%"></span>
+                </div>
+              </div>
+              <div style="text-align:right;margin-top:8px">
+                <a class="site-btn small" href="/pools/{{ p.meta.id }}/start">Start</a>
+                <a class="site-btn small ghost" href="/pools/{{ p.meta.id }}/stats">Stats</a>
+                <a class="site-btn small ghost" href="/pools/{{ p.meta.id }}/special">Special</a>
+                {% if p.meta.id != 'builtin' %}
+                  <form method="post" action="/pools/{{p.meta.id}}/delete" style="display:inline;" onsubmit="return confirm('Delete this pool and its progress?');">
+                    <button class="site-btn small danger" type="submit">Delete</button>
+                  </form>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: User Stats -->
+    <div class="card">
+      <h3 style="margin-top:0">Your Stats</h3>
+      <div class="stat-row">
+        <div class="stat">
+          <h3>{{ points }}</h3>
+          <p>Points</p>
+        </div>
+        <div class="stat">
+          <h3>{{ daily_streak }}</h3>
+          <p>Daily streak</p>
+        </div>
+        <div class="stat">
+          <h3>{{ badges|length }}</h3>
+          <p>Badges</p>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <canvas id="progressChart" height="160"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // animate progress bars
+  document.querySelectorAll('.progress > span').forEach(s => {
+    const w = s.style.width || '0%';
+    requestAnimationFrame(()=> s.style.width = w);
+  });
+  // small preview hook (optional)
+  document.getElementById('previewBtn')?.addEventListener('click', ()=> alert('Use the preview button after selecting filters.'));
+</script>
+</body>
+</html>

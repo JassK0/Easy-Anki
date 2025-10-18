@@ -1,0 +1,44 @@
+{
+  "5-03": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T22:48:34",
+    "due": "2025-10-18T22:48:34"
+  },
+  "5-08": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T22:48:40",
+    "due": "2025-10-18T22:48:40"
+  },
+  "4-07": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 2,
+    "last_seen": "2025-10-17T23:32:32",
+    "due": "2025-10-18T23:32:32"
+  },
+  "27": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 2,
+    "last_seen": "2025-10-17T23:57:26",
+    "due": "2025-10-18T23:57:26"
+  },
+  "19": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 1,
+    "last_seen": "2025-10-17T23:57:24",
+    "due": "2025-10-18T23:57:24"
+  },
+  "29": {
+    "box": 2,
+    "correct_streak": 1,
+    "incorrect_count": 0,
+    "last_seen": "2025-10-17T23:57:12",
+    "due": "2025-10-18T23:57:12"
+  }
+}

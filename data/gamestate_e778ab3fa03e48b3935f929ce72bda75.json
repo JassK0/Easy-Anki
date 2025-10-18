@@ -1,0 +1,18 @@
+{
+  "points": 12,
+  "badges": [],
+  "daily_streak": 1,
+  "last_active": "2025-10-17T23:32:37",
+  "history": [
+    {
+      "ts": "2025-10-17T23:32:28",
+      "delta": 2,
+      "reason": "incorrect"
+    },
+    {
+      "ts": "2025-10-17T23:32:32",
+      "delta": 10,
+      "reason": "correct"
+    }
+  ]
+}

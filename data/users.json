@@ -1,0 +1,14 @@
+{
+  "Jass": {
+    "pw": "34d6cedc884f6c884d203fcc9b023a9249c5bb4cf30f1e0672446b0d3ddaf3f2"
+  },
+  "jass": {
+    "pw": "25c4a2a08a213ce51bffc05bef3c310673ab181689a4f231121cd13d22c64dc1"
+  },
+  "Jassk": {
+    "pw": "scrypt:32768:8:1$jsErFHFDGR0LheQ9$58af6666af1d3a2af5728480e7bf7d6c113c8a1945ca1ed3409d65d1c80ba85f84bbcc5667f6a693fd9b35f9d50d6770c176a76ea09bafac8621a164ad91d701"
+  },
+  "jake": {
+    "pw": "scrypt:32768:8:1$hJ4VaBETSF4Al0ae$e8caf9003e14f2759108ee184316ac900c4430e0a23d0f051840f8f05fb5057fcee9194462fb9c8af62325af8dc857bf3ca4fb17678a31feeb5c77c124e88069"
+  }
+}
