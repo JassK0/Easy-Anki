@@ -1,5 +1,5 @@
 # quiz_plus.py
-# Course Trainer (Exam + SRS + Filters + CSV/JSON loader)
+# Easy Anki (Exam + SRS + Filters + CSV/JSON loader)
 import argparse
 import csv
 import json
@@ -398,7 +398,7 @@ def run_round(qs: List[Question], title: str, prog: Dict[str, CardState]) -> Lis
 
 def build_argparser():
     p = argparse.ArgumentParser(
-        description="Course Trainer — Exam + Anki-style review with SRS and CSV/JSON loader."
+        description="Easy Anki — Exam + Anki-style review with SRS and CSV/JSON loader."
     )
     p.add_argument("-s","--source", help="Path to CSV or JSON question bank. If omitted, uses built-in 40.")
     p.add_argument("-m","--mode", choices=["exam","practice"], default="exam",

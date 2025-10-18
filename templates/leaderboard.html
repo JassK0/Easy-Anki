@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Leaderboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Leaderboard</h2>
+        <p class="muted">Top 10 users</p>
+        <div style="margin-top:6px;display:flex;gap:8px;align-items:center">
+          <a class="site-btn small {% if tab=='points' %}active{% endif %}" href="/leaderboard?tab=points">Points</a>
+          <a class="site-btn small {% if tab=='rank' %}active{% endif %}" href="/leaderboard?tab=rank">Rank</a>
+        </div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr>
+            <th style="text-align:left">Place</th>
+            <th style="text-align:left">User</th>
+            <th style="text-align:left">Rank</th>
+            <th style="text-align:right">Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in top10 %}
+            <tr class="{% if current_user and item[0] == current_user %}highlight{% endif %}">
+              <td>{{ loop.index }}</td>
+              <td>{{ item[0] }}</td>
+                <td>{{ item[2] if item|length>2 else '—' }}</td>
+                <td style="text-align:right">{{ item[1] }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div style="margin-top:12px">
+        {% if current_user %}
+          {% if user_place %}
+            <div class="muted-small">You are currently <strong>#{{ user_place }}</strong> with <strong>{{ user_points }}</strong> points.</div>
+          {% else %}
+            <div class="muted-small">You have <strong>{{ user_points }}</strong> points but are not in the top 10 yet.</div>
+          {% endif %}
+        {% else %}
+          <div class="muted-small">Sign in to see your place on the leaderboard.</div>
+        {% endif %}
+      </div>
+
+      <div style="margin-top:12px"><a class="badge-pill" href="/">Back home</a></div>
+    </div>
+  </div>
+</body>
+</html>

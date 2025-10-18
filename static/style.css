@@ -27,7 +27,6 @@ body{
 .user-panel{display:flex;gap:12px;align-items:center}
 .points{background:var(--card);padding:8px 12px;border-radius:999px;display:flex;gap:8px;align-items:center;border:1px solid rgba(2,6,23,0.06)}
 .points strong{color:var(--accent)}
-.badges{display:flex;gap:8px}
 .badge-pill{background:#eef2ff;padding:6px 10px;border-radius:999px;font-size:0.85rem;color:#3730a3;border:1px solid rgba(99,102,241,0.08)}
 
 .grid{display:grid;grid-template-columns: 2fr 1fr;gap:18px}
@@ -75,3 +74,19 @@ body{
 
 /* responsive */
 @media (max-width:900px){.grid{grid-template-columns:1fr}.options{grid-template-columns:1fr}.pool-list{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}}
+
+/* how-to pre block: wrap long text and allow vertical scroll to avoid overflowing cards */
+.howto-pre{white-space:pre-wrap;word-break:break-word;overflow:auto;max-height:220px;padding:10px;border-radius:8px;border:1px solid rgba(2,6,23,0.04);background:#f8fafc}
+
+.howto-controls{display:flex;gap:8px;align-items:center;margin-top:8px}
+.howto-controls select, .howto-controls button{padding:6px 8px;border-radius:8px;border:1px solid rgba(2,6,23,0.06);background:white}
+.howto-controls .small-link{background:transparent;border:none;color:var(--muted);text-decoration:underline;cursor:pointer}
+.howto-controls .download-link{display:inline-block;padding:6px 8px;border-radius:8px;background:#eef2ff;border:1px solid rgba(99,102,241,0.08);color:#3730a3;text-decoration:none}
+
+/* centered card wrapper used for How-to and Leaderboard to ensure identical sizing and spacing */
+.centered-card{max-width:900px;margin:18px auto;padding:0 16px}
+/* when used inside the two-column grid, force the wrapper to span both columns so
+	it renders the same width as other full-width sections */
+.centered-card{grid-column: 1 / -1}
+/* ensure the inner card fills the available width consistently */
+.centered-card > .card{width:100%;box-sizing:border-box}

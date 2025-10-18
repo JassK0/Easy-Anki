@@ -10,19 +10,15 @@
   <div class="container">
     <div class="topbar">
       <div class="brand">
-        <div class="logo">CT</div>
+  <div class="logo">EA</div>
         <div>
-          <div class="app-title">Course Trainer</div>
+          <div class="app-title">Easy Anki</div>
           <div class="muted-small">Learn smarter — gamified SRS</div>
         </div>
       </div>
       <div class="user-panel">
         <div class="points">⭐ <strong>{{ points }}</strong></div>
-        <div class="badges">
-          {% for b in badges %}
-            <div class="badge-pill">{{ b }}</div>
-          {% endfor %}
-        </div>
+        <div class="rank">Rank: <strong>{{ rank }}</strong></div>
       </div>
     </div>
 

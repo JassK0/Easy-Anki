@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Course Trainer</title>
+  <title>Easy Anki</title>
   <link rel="stylesheet" href="/static/style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -18,19 +18,16 @@
 <div class="container">
   <div class="topbar">
     <div class="brand">
-      <div class="logo">CT</div>
+  <div class="logo">EA</div>
       <div>
-        <div class="app-title">Course Trainer</div>
-        <div class="muted-small">Learn smarter — gamified SRS</div>
+  <div class="app-title">Easy Anki</div>
+  <div class="muted-small">Learn smarter — gamified SRS</div>
       </div>
     </div>
     <div class="user-panel">
+      <div style="margin-right:12px"><a class="site-btn small ghost" href="/leaderboard">Leaderboard</a></div>
       <div class="points">⭐ <strong>{{ points }}</strong></div>
-      <div class="badges">
-        {% for b in badges %}
-          <div class="badge-pill">{{ b }}</div>
-        {% endfor %}
-      </div>
+      <div class="rank">Rank: <strong>{{ rank }}</strong></div>
       <div class="auth">
         {% if current_user %}
           <div class="muted-small">Signed in as <strong>{{ current_user }}</strong></div>
@@ -49,6 +46,7 @@
       <h2 style="margin-top:0">Question Pools</h2>
       <p class="muted">Choose a pool or upload your own CSV/JSON</p>
 
+      {% if current_user %}
       <form method="post" action="/start" enctype="multipart/form-data" class="upload-row">
         <input type="file" name="file">
         <input type="text" name="pool_name" placeholder="Optional pool name">
@@ -61,6 +59,9 @@
           <a class="site-btn ghost" href="/pools">Manage Pools</a>
         </div>
       </form>
+      {% else %}
+      <div class="muted-small">Sign in to upload your own pools. <a href="/login">Sign in</a> or <a href="/signup">sign up</a>.</div>
+      {% endif %}
 
       <div style="margin-top:12px">
         <h4 style="margin:6px 0">Available pools</h4>
@@ -78,7 +79,9 @@
               <div style="text-align:right;margin-top:8px">
                 <a class="site-btn small" href="/pools/{{ p.meta.id }}/start">Start</a>
                 <a class="site-btn small ghost" href="/pools/{{ p.meta.id }}/stats">Stats</a>
-                <a class="site-btn small ghost" href="/pools/{{ p.meta.id }}/special">Special</a>
+                {% if (p.stats.wrong_count|default(0)) > 0 %}
+                  <a class="site-btn small ghost" href="/pools/{{ p.meta.id }}/special">Special</a>
+                {% endif %}
                 {% if p.meta.id != 'builtin' %}
                   <form method="post" action="/pools/{{p.meta.id}}/delete" style="display:inline;" onsubmit="return confirm('Delete this pool and its progress?');">
                     <button class="site-btn small danger" type="submit">Delete</button>
@@ -103,14 +106,101 @@
           <h3>{{ daily_streak }}</h3>
           <p>Daily streak</p>
         </div>
+        <!-- Badges removed; ranks are used instead -->
         <div class="stat">
-          <h3>{{ badges|length }}</h3>
-          <p>Badges</p>
+          <h3>{{ rank }}</h3>
+          <p>Rank</p>
         </div>
       </div>
       <div style="margin-top:12px">
         <canvas id="progressChart" height="160"></canvas>
       </div>
+    </div>
+    
+  <!-- Leaderboard removed from grid; rendered after the grid so it matches How-to sizing -->
+  </div>
+
+  <!-- Leaderboard (moved above How-to) -->
+  <div class="centered-card">
+    <div class="card">
+      <h3 style="margin-top:0">Leaderboard</h3>
+      <p class="muted-small">Top users by points</p>
+      <table style="width:100%;border-collapse:collapse;margin-top:8px">
+        <thead>
+          <tr><th style="text-align:left">Place</th><th style="text-align:left">User</th><th style="text-align:left">Rank</th><th style="text-align:right">Points</th></tr>
+        </thead>
+        <tbody>
+          {% for item in leaderboard.top10 %}
+            <tr class="{% if current_user and item[0] == current_user %}highlight{% endif %}">
+              <td>{{ loop.index }}</td>
+              <td>{{ item[0] }}</td>
+              <td>{{ item[2] if item|length>2 else '—' }}</td>
+              <td style="text-align:right">{{ item[1] }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div style="margin-top:10px">
+        {% if current_user %}
+          {% if leaderboard.user_place %}
+            <div class="muted-small">You are <strong>#{{ leaderboard.user_place }}</strong> with <strong>{{ leaderboard.user_points }}</strong> points.</div>
+          {% else %}
+            <div class="muted-small">You have <strong>{{ leaderboard.user_points }}</strong> points but are not in the top 10.</div>
+          {% endif %}
+        {% else %}
+          <div class="muted-small">Sign in to see your place on the leaderboard.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- How to use -->
+  <div class="centered-card">
+    <div class="card">
+      <h3 style="margin-top:0">How to use Easy Anki</h3>
+      <ol style="padding-left:18px;margin:8px 0">
+        <li>Pick a pool or upload your own CSV/JSON of questions and click <strong>Start</strong>.</li>
+        <li>Answer the questions — the app tracks streaks and awards points and rank based on performance.</li>
+        <li>Use the <strong>Special</strong> review on any pool to rehearse the questions you've answered incorrectly.</li>
+      </ol>
+      <p class="muted-small">Tip: you can use an AI assistant (for example ChatGPT) to convert course notes into an Anki-style CSV of question rows. Example prompt you can use:</p>
+      <div class="howto-controls">
+        <label for="preset">Preset:</label>
+        <select id="preset">
+          <option value="default">Balanced (default)</option>
+          <option value="exam">Exam-style (harder)</option>
+          <option value="concept">Concept-check (short questions)</option>
+          <option value="few">Few questions (5)</option>
+        </select>
+        <button id="copyPrompt">Copy prompt</button>
+        <a class="download-link" href="/static/ankitemplate.csv" download>Download CSV template</a>
+      </div>
+      <pre id="howtoPrompt" class="howto-pre">Convert the following course notes into an Anki-style CSV with columns: Question,OptionA,OptionB,OptionC,OptionD,Answer,Explanation. Make about 20 multiple-choice questions that cover the important concepts. Use clear, short questions and plausible distractors.
+
+[PASTE YOUR NOTES HERE]
+</pre>
+      <p class="muted-small">After you get the CSV from the assistant, upload it on the home page (you must be signed in to upload). The site will create a pool from the file and you can start practicing immediately.</p>
+      <script>
+        const presets = {
+          'default': 'Convert the following course notes into an Anki-style CSV with columns: Question,OptionA,OptionB,OptionC,OptionD,Answer,Explanation. Make about 20 multiple-choice questions that cover the important concepts. Use clear, short questions and plausible distractors.\\n\\n[PASTE YOUR NOTES HERE]\\n',
+          'exam': 'Convert the following course notes into an Anki-style CSV with columns: Question,OptionA,OptionB,OptionC,OptionD,Answer,Explanation. Produce 25 exam-style multiple-choice questions emphasizing edge-cases and tricky distractors. Make the questions slightly harder and focused on problem-solving.\\n\\n[PASTE YOUR NOTES HERE]\\n',
+          'concept': 'Convert the following course notes into an Anki-style CSV with columns: Question,OptionA,OptionB,OptionC,OptionD,Answer,Explanation. Produce 20 short concept-check questions (concise prompts, clear distractors).\\n\\n[PASTE YOUR NOTES HERE]\\n',
+          'few': 'Convert the following course notes into an Anki-style CSV with columns: Question,OptionA,OptionB,OptionC,OptionD,Answer,Explanation. Produce 5 high-quality multiple-choice questions covering the most important points.\\n\\n[PASTE YOUR NOTES HERE]\\n',
+        };
+        const presetEl = document.getElementById('preset');
+        const promptEl = document.getElementById('howtoPrompt');
+        const copyBtn = document.getElementById('copyPrompt');
+        presetEl.addEventListener('change', ()=>{
+          const v = presetEl.value || 'default';
+          promptEl.textContent = presets[v];
+        });
+        copyBtn.addEventListener('click', ()=>{
+          navigator.clipboard.writeText(promptEl.textContent).then(()=>{
+            copyBtn.textContent = 'Copied!';
+            setTimeout(()=> copyBtn.textContent = 'Copy prompt', 1600);
+          }).catch(()=> alert('Copy failed — select and copy manually.'));
+        });
+      </script>
     </div>
   </div>
 </div>

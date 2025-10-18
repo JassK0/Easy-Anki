@@ -104,6 +104,7 @@ def compute_stats_for_pool(pool_meta):
     answered = len(prog)
     correct_streaks = {qid: v.get('correct_streak', 0) for qid, v in prog.items()}
     incorrect_counts = {qid: v.get('incorrect_count', 0) for qid, v in prog.items()}
+    wrong_count = sum(1 for v in prog.values() if v.get('incorrect_count', 0) > 0)
     most_correct = None
     most_wrong = None
     if correct_streaks:
@@ -132,6 +133,7 @@ def compute_stats_for_pool(pool_meta):
     return {
         'total': total,
         'answered': answered,
+        'wrong_count': wrong_count,
         'most_correct': most_correct,
         'most_wrong': most_wrong,
         'incorrect_total': incorrect_total,
@@ -186,13 +188,29 @@ def load_gamestate(user_id=None):
     fp = _gamestate_path(user_id)
     if os.path.exists(fp):
         try:
-            return _json.load(open(fp, 'r', encoding='utf-8'))
+            gs = _json.load(open(fp, 'r', encoding='utf-8'))
+            # ensure numeric points and up-to-date rank
+            try:
+                # coerce points to int when possible
+                if 'points' in gs:
+                    gs['points'] = int(gs.get('points', 0))
+            except Exception:
+                gs['points'] = 0
+            # recalc rank from points to keep consistency
+            check_and_award_badges(gs)
+            # persist any change
+            try:
+                _json.dump(gs, open(fp, 'w', encoding='utf-8'), indent=2)
+            except Exception:
+                pass
+            return gs
         except Exception:
             pass
     # default gamestate
     gs = {
         'points': 0,
-        'badges': [],
+        'rank': 'Unranked',
+        'answer_streak': 0,  # positive = correct streak length, negative = wrong streak length
         'daily_streak': 0,
         'last_active': None,
         'history': []
@@ -250,17 +268,25 @@ def award_points(gs, amount, reason=None, user_id=None):
 
 
 def check_and_award_badges(gs):
-    # simple thresholds
-    thresholds = [(700, 'Gold'), (300, 'Silver'), (100, 'Bronze')]
+    # Update rank based on points thresholds
     p = gs.get('points', 0)
-    for thr, name in thresholds:
-        if p >= thr and name not in gs.get('badges', []):
-            gs.setdefault('badges', []).append(name)
-    # streak badges
-    if gs.get('daily_streak', 0) >= 7 and '7-day-streak' not in gs.get('badges', []):
-        gs.setdefault('badges', []).append('7-day-streak')
-    if gs.get('daily_streak', 0) >= 30 and '30-day-streak' not in gs.get('badges', []):
-        gs.setdefault('badges', []).append('30-day-streak')
+    # New rank tiers
+    if p >= 1500:
+        r = 'Grand Master'
+    elif p >= 1000:
+        r = 'Master'
+    elif p >= 700:
+        r = 'Diamond'
+    elif p >= 500:
+        r = 'Gold'
+    elif p >= 300:
+        r = 'Silver'
+    elif p >= 100:
+        r = 'Bronze'
+    else:
+        r = 'Unranked'
+    gs['rank'] = r
+    return r
 
 
 def get_user_id():
@@ -275,6 +301,61 @@ def get_user_id():
 def current_user():
     # return username if signed in
     return session.get('username')
+
+
+def all_user_points():
+    """Return a dict username -> points by reading users.json and per-user gamestate files."""
+    users = read_users()
+    res = {}
+    import json as _json
+    for u in users.keys():
+        try:
+            gp = _gamestate_path(u)
+            if os.path.exists(gp):
+                data = _json.load(open(gp, 'r', encoding='utf-8'))
+                res[u] = (int(data.get('points', 0)), data.get('rank','Unranked'))
+            else:
+                res[u] = (0, 'Unranked')
+        except Exception:
+            res[u] = 0
+    return res
+
+
+@app.route('/leaderboard')
+def leaderboard():
+    # compute leaderboard. support tabs: 'points' (default) or 'rank'
+    pts = all_user_points()
+    # pts: username -> (points, rank)
+    tab = request.args.get('tab', 'points')
+    # define rank ordering for sorting when tab='rank'
+    RANK_ORDER = {
+        'Grand Master': 6,
+        'Master': 5,
+        'Diamond': 4,
+        'Gold': 3,
+        'Silver': 2,
+        'Bronze': 1,
+        'Unranked': 0,
+    }
+
+    if tab == 'rank':
+        # sort primarily by rank value, then by points, then username
+        sorted_users = sorted(pts.items(), key=lambda x: (-RANK_ORDER.get(x[1][1], 0), -x[1][0], x[0]))
+    else:
+        # default: sort by points
+        sorted_users = sorted(pts.items(), key=lambda x: (-x[1][0], x[0]))
+
+    top10 = [(u, p[0], p[1]) for u, p in sorted_users[:10]]
+    cur = current_user()
+    user_place = None
+    user_points = 0
+    if cur:
+        for i, (u, p) in enumerate(sorted_users, start=1):
+            if u == cur:
+                user_place = i
+                user_points = p[0]
+                break
+    return render_template('leaderboard.html', top10=top10, user_place=user_place, user_points=user_points, current_user=cur, tab=tab)
 
 
 def is_strong_password(pw: str) -> Tuple[bool, list]:
@@ -346,7 +427,22 @@ def index():
     # update daily streak on each visit
     gs = update_daily_streak(gs)
     save_gamestate(gs, user or uid)
-    return render_template('index.html', pools=stats, points=gs.get('points',0), badges=gs.get('badges', []), daily_streak=gs.get('daily_streak', 0), current_user=user)
+    # prepare leaderboard summary for embedding on the main page
+    pts = all_user_points()
+    # pts: username -> (points, rank)
+    sorted_users = sorted(pts.items(), key=lambda x: (-x[1][0], x[0]))
+    # sorted_users: list of (username, (points, rank))
+    top10 = [(u, v[0], v[1]) for u, v in sorted_users[:10]]
+    user_place = None
+    user_points = 0
+    if user:
+        for i, (u, p) in enumerate(sorted_users, start=1):
+            if u == user:
+                user_place = i
+                user_points = p[0]
+                break
+    leaderboard = {'top10': top10, 'user_place': user_place, 'user_points': user_points}
+    return render_template('index.html', pools=stats, points=gs.get('points',0), daily_streak=gs.get('daily_streak', 0), rank=gs.get('rank','Unranked'), current_user=user, leaderboard=leaderboard)
 
 @app.route('/start', methods=['POST'])
 def start():
@@ -354,6 +450,10 @@ def start():
     f = request.files.get('file')
     src = None
     if f:
+        # only allow uploads from signed-in users
+        if not current_user():
+            flash('Please sign in to upload pools', 'error')
+            return redirect(url_for('login'))
         pid = uuid.uuid4().hex
         filename = f"{pid}_{f.filename}"
         dest = os.path.join(DATA_DIR, filename)
@@ -416,7 +516,10 @@ def pools():
     builtin_meta = {'id': 'builtin', 'path': None, 'orig_name': 'Built-in pool'}
     pools_display = [builtin_meta] + pools
     if request.method == 'POST':
-        # handle file upload
+        # handle file upload - only signed-in users may upload
+        if not current_user():
+            flash('Please sign in to upload pools', 'error')
+            return redirect(url_for('login'))
         f = request.files.get('file')
         if not f:
             return redirect(url_for('pools'))
@@ -519,7 +622,7 @@ def signup():
     uid = get_user_id()
     user = current_user()
     gs = load_gamestate(user or uid)
-    return render_template('signup.html', current_user=user, points=gs.get('points',0), badges=gs.get('badges', []), daily_streak=gs.get('daily_streak', 0))
+    return render_template('signup.html', current_user=user, points=gs.get('points',0), rank=gs.get('rank','Unranked'), daily_streak=gs.get('daily_streak', 0))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -548,7 +651,7 @@ def login():
     uid = get_user_id()
     user = current_user()
     gs = load_gamestate(user or uid)
-    return render_template('login.html', current_user=user, points=gs.get('points',0), badges=gs.get('badges', []), daily_streak=gs.get('daily_streak', 0))
+    return render_template('login.html', current_user=user, points=gs.get('points',0), rank=gs.get('rank','Unranked'), daily_streak=gs.get('daily_streak', 0))
 
 
 @app.route('/logout')
@@ -566,6 +669,11 @@ def pools_special(pid):
     else:
         meta = next((p for p in pools if p['id']==pid), None)
     if not meta:
+        return redirect(url_for('pools'))
+    # check per-pool wrong_count and don't start if there are none
+    s = compute_stats_for_pool(meta)
+    if s.get('wrong_count', 0) == 0:
+        # nothing to review
         return redirect(url_for('pools'))
     # load questions and per-pool progress
     if meta.get('id') == 'builtin':
@@ -676,7 +784,7 @@ def pools_stats(pid):
         except Exception:
             extra = {'correct': 0, 'incorrect': 0, 'accuracy': 0}
 
-    return render_template('pool_stats.html', meta=meta, stats=stats, times=times, extra=extra, points=gs.get('points',0), badges=gs.get('badges', []), daily_streak=gs.get('daily_streak', 0), current_user=current_user())
+    return render_template('pool_stats.html', meta=meta, stats=stats, times=times, extra=extra, points=gs.get('points',0), rank=gs.get('rank','Unranked'), daily_streak=gs.get('daily_streak', 0), current_user=current_user())
 
 @app.route('/question', methods=['GET', 'POST'])
 def question():
@@ -697,9 +805,10 @@ def question():
 
     qd = s[idx]
     # convert dict back to simple object-like for template
-    class Q: pass
-    q = Q()
-    q.__dict__.update(qd)
+    class Q:
+        def __init__(self, **kwargs):
+            self.__dict__.update(kwargs)
+    q = Q(**qd)
 
     if request.method == 'POST':
         choice = request.form.get('choice')
@@ -720,15 +829,34 @@ def question():
         state['index'] = idx + 1
 
         # gamification: award points (per-user) after answering
-        uid = get_user_id()
+        user = current_user()
+        uid = user or get_user_id()
         gs = load_gamestate(uid)
         # ensure daily streak is current for this activity
         gs = update_daily_streak(gs)
-        delta = 10 if ok else 2
-        reason = 'correct' if ok else 'incorrect'
+        # implement streak-based doubling: correct streak doubles points each successive correct
+        # and wrong streak doubles negative penalty similarly. We store answer_streak in gamestate
+        streak = gs.get('answer_streak', 0) or 0
+        if ok:
+            # if previous streak was negative (wrong streak), reset
+            if streak < 0:
+                streak = 0
+            # next point value: base 10, doubles each correct in streak: 10 * (2 ** streak)
+            delta = 10 * (2 ** streak)
+            streak = streak + 1
+            reason = 'correct'
+        else:
+            # if previous streak was positive (correct streak), reset
+            if streak > 0:
+                streak = 0
+            # wrong penalties: -2, then -4, -8, ...
+            delta = - (2 * (2 ** abs(streak))) if streak < 0 else -2
+            streak = streak - 1
+            reason = 'incorrect'
+        gs['answer_streak'] = streak
         award_points(gs, delta, reason, user_id=uid)
         # render result page
-    return render_template('result.html', ok=ok, q=q, points_delta=delta, points=gs.get('points',0), badges=gs.get('badges', []), daily_streak=gs.get('daily_streak', 0), current_user=current_user())
+    return render_template('result.html', ok=ok, q=q, points_delta=delta, points=gs.get('points',0), rank=gs.get('rank','Unranked'), daily_streak=gs.get('daily_streak', 0), current_user=current_user())
 
     # GET: build letter-option pairs for template
     letters = ['A', 'B', 'C', 'D']

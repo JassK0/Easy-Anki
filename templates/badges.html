@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Your Badges</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Your Badges</h2>
+      {% if not current_user %}
+        <div class="muted-small">Sign in to earn and view badges. <a href="/login">Sign in</a></div>
+      {% endif %}
+      <div style="margin-top:12px">
+        {% if badges and badges|length > 0 %}
+          <div class="badges">
+            {% for b in badges %}
+              <a class="badge-pill" href="/badges/{{ b }}">{{ b.replace('_',' ').title() }}</a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="muted-small">You have no badges yet. Keep answering questions to earn badges.</div>
+        {% endif %}
+      </div>
+      <div style="margin-top:12px"><a class="badge-pill" href="/">Back home</a></div>
+    </div>
+  </div>
+</body>
+</html>

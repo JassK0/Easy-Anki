@@ -1,0 +1,76 @@
+{
+  "points": 106,
+  "badges": [
+    "Bronze"
+  ],
+  "daily_streak": 1,
+  "last_active": "2025-10-18T19:01:27",
+  "history": [
+    {
+      "ts": "2025-10-18T19:06:10",
+      "delta": 10,
+      "reason": "correct"
+    },
+    {
+      "ts": "2025-10-18T19:09:20",
+      "delta": 10,
+      "reason": "correct"
+    },
+    {
+      "ts": "2025-10-18T19:09:29",
+      "delta": 10,
+      "reason": "correct"
+    },
+    {
+      "ts": "2025-10-18T19:09:38",
+      "delta": 2,
+      "reason": "incorrect"
+    },
+    {
+      "ts": "2025-10-18T19:09:47",
+      "delta": 2,
+      "reason": "incorrect"
+    },
+    {
+      "ts": "2025-10-18T19:10:01",
+      "delta": 10,
+      "reason": "correct"
+    },
+    {
+      "ts": "2025-10-18T19:10:03",
+      "delta": 10,
+      "reason": "correct"
+    },
+    {
+      "ts": "2025-10-18T19:10:14",
+      "delta": 10,
+      "reason": "correct"
+    },
+    {
+      "ts": "2025-10-18T19:10:34",
+      "delta": 2,
+      "reason": "incorrect"
+    },
+    {
+      "ts": "2025-10-18T19:10:46",
+      "delta": 10,
+      "reason": "correct"
+    },
+    {
+      "ts": "2025-10-18T19:10:52",
+      "delta": 10,
+      "reason": "correct"
+    },
+    {
+      "ts": "2025-10-18T19:10:59",
+      "delta": 10,
+      "reason": "correct"
+    },
+    {
+      "ts": "2025-10-18T19:11:06",
+      "delta": 10,
+      "reason": "correct"
+    }
+  ],
+  "rank": "Bronze"
+}

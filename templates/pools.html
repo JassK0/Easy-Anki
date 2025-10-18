@@ -9,12 +9,16 @@
 <body>
   <div class="container">
     <div class="card">
-      <h2>Your Pools</h2>
+      <h2>Your Pools <a class="site-btn small ghost" href="/leaderboard" style="margin-left:12px">Leaderboard</a></h2>
+      {% if current_user %}
       <form method="post" enctype="multipart/form-data" class="form-row">
         <input type="file" name="file">
         <input type="text" name="pool_name" placeholder="Optional pool name">
         <button class="btn-primary">Upload</button>
       </form>
+      {% else %}
+      <div class="muted-small">Sign in to upload pools. <a href="/login">Sign in</a> or <a href="/signup">sign up</a>.</div>
+      {% endif %}
 
       <div style="margin-top:12px">
         {% for p in pools %}
@@ -28,7 +32,9 @@
               <div style="margin-top:6px">
                 <a class="site-btn small" href="/pools/{{p.meta.id}}/start">Start</a>
                 <a class="site-btn small ghost" href="/pools/{{p.meta.id}}/stats">Stats</a>
-                <a class="site-btn small ghost" href="/pools/{{p.meta.id}}/special">Special</a>
+                {% if (p.stats.wrong_count|default(0)) > 0 %}
+                  <a class="site-btn small ghost" href="/pools/{{p.meta.id}}/special">Special</a>
+                {% endif %}
                 {% if p.meta.id != 'builtin' %}
                   <a class="site-btn small ghost" href="/pools/{{p.meta.id}}/rename">Rename</a>
                   <form method="post" action="/pools/{{p.meta.id}}/delete" style="display:inline;" onsubmit="return confirm('Delete this pool and its progress?');">
