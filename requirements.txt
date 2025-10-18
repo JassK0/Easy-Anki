@@ -1,12 +1,7 @@
-# requirements.txt
-# Generated from imports in main.py
-# All imports found in main.py are from the Python standard library:
-# argparse, csv, json, math, os, random, re, sys, dataclasses, datetime, typing
-# No external (PyPI) packages required.
-
-# Third-party runtime dependencies for web GUI
+# Minimal runtime dependencies for the web GUI
+# Flask provides the web framework and includes Werkzeug/Jinja as dependencies.
 Flask==3.1.2
 gunicorn==21.2.0
 
-# If you later add third-party libraries, add them here, e.g.:
-# requests==2.31.0
+# If you add new third-party libraries (e.g. for password hashing or email),
+# add them here and pin a suitable version.
